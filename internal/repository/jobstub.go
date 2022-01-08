@@ -75,8 +75,13 @@ func (sr *StubRepository) processText(j internal.Job) {
 	jr := internal.NewJobResult()
 	fmt.Println("jr:", jr)
 	for _, word := range words {
-		c := strings.Count(j.Text, word)
-		jr.Frequency[word] = c
+		if len(word) > 1 {
+			c := strings.Count(j.Text, word)
+			jr.Frequency[word] = c
+		} else {
+			jr.Frequency[word] = 1
+		}
 	}
+	fmt.Println(jr.Frequency)
 	sr.result[j.ID] = *jr
 }
