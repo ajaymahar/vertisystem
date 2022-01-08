@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"sort"
 
 	"github.com/ajaymahar/vertisystem/internal"
 	"github.com/ajaymahar/vertisystem/internal/repository"
@@ -46,9 +47,17 @@ type GetJobResponse struct {
 
 //GetJob
 type GetJob struct {
-	ID        string
-	Frequency map[string]int // word with it's occurance
+	ID string
+	// Frequency map[string]int // word with it's occurance
+	Frequency []kv // word with it's occurance
 }
+
+type kv struct {
+	Key   string `json:"key"`
+	Value int    `json:"value"`
+}
+
+var kvList []kv
 
 // ################################
 
@@ -122,13 +131,18 @@ func (rh *JobHandler) getWords(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Println(jobResult)
-	// fmt.Println("job result")
+	for k, v := range jobResult.Frequency {
+		kvList = append(kvList, kv{k, v})
+	}
 
+	sort.Slice(kvList, func(i, j int) bool {
+		return kvList[i].Value > kvList[j].Value
+	})
+	kvList = kvList[:10]
 	resp := GetJobResponse{
 		Job: GetJob{
 			ID:        id,
-			Frequency: jobResult.Frequency,
+			Frequency: kvList,
 		},
 	}
 
@@ -136,32 +150,3 @@ func (rh *JobHandler) getWords(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
-// // middleware to validate the comming request
-// func (rh *JobHandler) validatePayload(next http.HandlerFunc) http.HandlerFunc {
-//
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		var p RequestPayload
-// 		payload, err := ioutil.ReadAll(r.Body)
-// 		defer r.Body.Close()
-// 		if err != nil {
-// 			rh.l.Println("validatePayload: readAll: ", err)
-// 			return
-// 		}
-//
-// 		// check if it's valid json data
-// 		if !json.Valid(payload) {
-// 			// not valid json
-// 			rh.l.Println("validatePayload: json.Valid: ")
-// 			return
-// 		}
-//
-// 		if p.Data == "" {
-// 			rh.l.Println("data must be provided")
-// 			return
-// 		}
-//
-// 		// call next handler
-// 		next.ServeHTTP(w, r)
-// 	}
-// }
