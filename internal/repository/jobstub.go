@@ -128,12 +128,13 @@ func (sr *StubRepository) getTopNWords() (internal.JobResult, error) {
 	// sorting
 	sort.Sort(sort.Reverse(w))
 
-	var r internal.JobResult
+	// var jr internal.JobResult
+	r := internal.NewJobResult()
 	for _, kv := range w {
-		fmt.Printf("value: %v, type: %T ", kv, kv)
-		// r.Frequency[]
+		fmt.Printf("value: %+v", kv)
+		r.Frequency[kv.Key] = kv.Value
 	}
-	return r, nil
+	return *r, nil
 	// keys := make([]int, )
 
 	// hack := map[int]string{}
