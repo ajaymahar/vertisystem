@@ -9,3 +9,11 @@ type Job struct {
 type JobResult struct {
 	Frequency map[string]int // word with it's occurance
 }
+
+// NewJobResult factory function
+func NewJobResult() *JobResult {
+	return &JobResult{
+		Frequency: make(map[string]int),
+	}
+
+}

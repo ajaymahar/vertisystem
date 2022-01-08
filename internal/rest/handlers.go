@@ -3,16 +3,19 @@ package rest
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
 	"github.com/ajaymahar/vertisystem/internal"
+	"github.com/ajaymahar/vertisystem/internal/repository"
 	"github.com/gorilla/mux"
 )
 
 // JobService
 type JobService interface {
 	Create(context.Context, string) (internal.Job, error)
+	Get(context.Context, string) (internal.JobResult, error)
 }
 
 // ################################
@@ -23,11 +26,28 @@ type CreateJobRequest struct {
 
 // CreateJobResponse defines the response returned back to the client
 type CreateJobResponse struct {
-	Job Job `json:"job"`
+	Job CreateJob `json:"job"`
 }
 
-type Job struct {
+type CreateJob struct {
 	ID string `json:"id"`
+}
+
+// ################################
+// GetJobRequest to hold the request payload data
+type GetJobRequest struct {
+	ID string `json:"id"`
+}
+
+// GetJobResponse defines the response returned back to the client
+type GetJobResponse struct {
+	Job GetJob `json:"job"`
+}
+
+//GetJob
+type GetJob struct {
+	ID        string
+	Frequency map[string]int // word with it's occurance
 }
 
 // ################################
@@ -51,7 +71,8 @@ func NewJobHandler(svc JobService, l *log.Logger) *JobHandler {
 func (rh *JobHandler) Register(r *mux.Router) {
 
 	sr := r.PathPrefix("/api").Subrouter()
-	sr.HandleFunc("/submit", rh.createJob).Methods(http.MethodPost)
+	sr.HandleFunc("/text", rh.createJob).Methods(http.MethodPost)
+	sr.HandleFunc("/text/{id}", rh.getWords).Methods(http.MethodGet)
 }
 
 // ##################################
@@ -72,10 +93,45 @@ func (rh *JobHandler) createJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp := CreateJobResponse{
-		Job: Job{
+		Job: CreateJob{
 			ID: job.ID,
 		},
 	}
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+//
+func (rh *JobHandler) getWords(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	// fmt.Println("id: ", id)
+
+	req := GetJobRequest{
+		ID: id,
+	}
+	jobResult, err := rh.svc.Get(r.Context(), req.ID)
+	if err != nil {
+		// handle wrong id
+		if errors.Is(err, repository.ErrJobNotFound) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		// any other error
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// fmt.Println(jobResult)
+	// fmt.Println("job result")
+
+	resp := GetJobResponse{
+		Job: GetJob{
+			ID:        id,
+			Frequency: jobResult.Frequency,
+		},
+	}
+
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -108,16 +164,4 @@ func (rh *JobHandler) createJob(w http.ResponseWriter, r *http.Request) {
 // 		// call next handler
 // 		next.ServeHTTP(w, r)
 // 	}
-// }
-
-//
-// func (rh *JobHandler) getWords(w http.ResponseWriter, r *http.Request) {
-// 	var data RequestPayload
-// 	err := json.NewDecoder(r.Body).Decode(&data)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-//
-// 	// pass request to next service
-// 	rh.svc.Create(data)
 // }

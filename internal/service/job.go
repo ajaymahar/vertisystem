@@ -12,6 +12,7 @@ import (
 // JobRepository Port
 type JobRepository interface {
 	Create(context.Context, string) (internal.Job, error)
+	Get(context.Context, string) (internal.JobResult, error)
 }
 
 // JobService which will implement the service port
@@ -31,4 +32,13 @@ func (djs DefaultJobService) Create(ctx context.Context, text string) (internal.
 		return internal.Job{}, fmt.Errorf("repo.create: %w", err)
 	}
 	return job, nil
+}
+
+func (djs DefaultJobService) Get(ctx context.Context, id string) (internal.JobResult, error) {
+	result, err := djs.repo.Get(ctx, id)
+	if err != nil {
+		log.Println("defaultJobService: Get: repo.Get", err)
+		return internal.JobResult{}, fmt.Errorf("repo.get: %w", err)
+	}
+	return result, nil
 }
