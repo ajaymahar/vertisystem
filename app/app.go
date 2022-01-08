@@ -15,9 +15,11 @@ func StartService() {
 	// mux router
 	r := mux.NewRouter()
 
+	// service
+
 	// register new request handler
-	rh := rest.NewRequestHandler()
-	rh.Register(r)
+	jh := rest.NewJobHandler(r, serviceLogger)
+	jh.Register(r)
 
 	// create new server and inject logger and mux router
 	s := NewServer(r, serviceLogger)
