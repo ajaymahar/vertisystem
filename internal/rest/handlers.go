@@ -3,7 +3,6 @@ package rest
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -72,7 +71,14 @@ func (rh *JobHandler) createJob(w http.ResponseWriter, r *http.Request) {
 		rh.l.Println("jobhandler: createJob: svc.Create ", err)
 		return
 	}
-	fmt.Fprintln(w, job)
+	resp := CreateJobResponse{
+		Job: Job{
+			ID: job.ID,
+		},
+	}
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // // middleware to validate the comming request
