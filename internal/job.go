@@ -7,6 +7,5 @@ type Job struct {
 }
 
 type JobResult struct {
-	ID        string
 	Frequency map[string]int // word with it's occurance
 }
