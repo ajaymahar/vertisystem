@@ -4,7 +4,10 @@ import (
 	"log"
 	"os"
 
+
+	"github.com/ajaymahar/vertisystem/internal/repository"
 	"github.com/ajaymahar/vertisystem/internal/rest"
+	"github.com/ajaymahar/vertisystem/internal/service"
 	"github.com/gorilla/mux"
 )
 
@@ -15,9 +18,15 @@ func StartService() {
 	// mux router
 	r := mux.NewRouter()
 
+	// repository
+	repo := repository.NewStubRepository()
+
+	// service
+	svc := service.NewDefaultJobService(repo)
+
 	// register new request handler
-	rh := rest.NewRequestHandler()
-	rh.Register(r)
+	jh := rest.NewJobHandler(svc, serviceLogger)
+	jh.Register(r)
 
 	// create new server and inject logger and mux router
 	s := NewServer(r, serviceLogger)
