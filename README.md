@@ -1,3 +1,47 @@
+# vertisystem
+Verti System assignment.
+
+### Insctuction to build and use the service.
+#### 1. Clone the git project.
+`git clone https://github.com/ajaymahar/vertisystem.git && cd vertisystem`
+
+#### 2. Build binary and run it.
+###  **Linux**
+
+#### 64-bit
+```bash
+$ GOOS=linux GOARCH=amd64 go build -o vertisystem cmd/main.go&& ./vertisystem
+```
+#### 32-bit
+```bash
+$ GOOS=linux GOARCH=386 go build -o vertisystem cmd/main.go&& ./vertisystem 
+```
+
+
+------------
+
+
+
+### **MacOS**
+#### 64-bit
+```bash
+$ GOOS=darwin GOARCH=amd64 go build -o  vertisystem cmd/main.go && ./vertisystem
+```
+
+#### 32-bit
+```bash
+$ GOOS=darwin GOARCH=386 go build -o vertisystem cmd/main.go && ./vertisystem
+```
+
+------------
+
+
+### **Windows**
+#### 64-bit
+```bash
+$ GOOS=windows GOARCH=amd6
+Verti System assignment 
+
 4 go build -o vertisystem.exe cmd/main.go
 ```
 
@@ -110,45 +154,4 @@ Output:
     ]
   }
 }
-```# vertisystem
-Verti System assignment.
 
-### Insctuction to build and use the service.
-#### 1. Clone the git project.
-`git clone https://github.com/ajaymahar/vertisystem.git && cd vertisystem`
-
-#### 2. Build binary and run it.
-###  **Linux**
-
-#### 64-bit
-```bash
-$ GOOS=linux GOARCH=amd64 go build -o vertisystem cmd/main.go&& ./vertisystem
-```
-#### 32-bit
-```bash
-$ GOOS=linux GOARCH=386 go build -o vertisystem cmd/main.go&& ./vertisystem 
-```
-
-------------
-
-
-
-### **MacOS**
-#### 64-bit
-```bash
-$ GOOS=darwin GOARCH=amd64 go build -o  vertisystem cmd/main.go && ./vertisystem
-```
-
-#### 32-bit
-```bash
-$ GOOS=darwin GOARCH=386 go build -o vertisystem cmd/main.go && ./vertisystem
-```
-
-------------
-
-
-### **Windows**
-#### 64-bit
-```bash
-$ GOOS=windows GOARCH=amd6
-Verti System assignment 
