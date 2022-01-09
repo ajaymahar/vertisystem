@@ -80,7 +80,7 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
 < HTTP/1.1 200 OK
 < Date: Sun, 09 Jan 2022 05:00:37 GMT
 < Content-Length: 54
-< Content-Type: text/plain; charset=utf-8
+< Content-Type: application/json
 <
 { [54 bytes data]
 100   251  100    54  100   197   5716  20853 --:--:-- --:--:-- --:--:--  122k
