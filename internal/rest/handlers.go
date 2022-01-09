@@ -106,6 +106,7 @@ func (rh *JobHandler) createJob(w http.ResponseWriter, r *http.Request) {
 			ID: job.ID,
 		},
 	}
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -146,6 +147,7 @@ func (rh *JobHandler) getWords(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
