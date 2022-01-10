@@ -139,7 +139,9 @@ func (rh *JobHandler) getWords(w http.ResponseWriter, r *http.Request) {
 	sort.Slice(kvList, func(i, j int) bool {
 		return kvList[i].Value > kvList[j].Value
 	})
-	kvList = kvList[:10]
+	if len(kvList) > 10 {
+		kvList = kvList[:10]
+	}
 	resp := GetJobResponse{
 		Job: GetJob{
 			ID:        id,
